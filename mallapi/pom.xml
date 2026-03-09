@@ -13,7 +13,7 @@
 	<artifactId>mallapi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>mallapi</name>
-	<description>Demo project for Spring Boot</description>
+	<description>mallapi STS Project</description>
 	<url />
 	<licenses>
 		<license />
@@ -71,7 +71,7 @@
 			<groupId>org.apache.tomcat.embed</groupId>
 			<artifactId>tomcat-embed-jasper</artifactId>
 		</dependency>
-		<!-- jstl 에 대한 두 개 라이브러리-->
+		<!-- jstl 에 대한 두 개 라이브러리 -->
 		<dependency>
 			<groupId>org.glassfish.web</groupId>
 			<artifactId>jakarta.servlet.jsp.jstl</artifactId>
@@ -79,6 +79,13 @@
 		<dependency>
 			<groupId>jakarta.servlet.jsp.jstl</groupId>
 			<artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.modelmapper/modelmapper -->
+		<!-- TodoDTO => Todo entity, Todo entity => TodoDTO -->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>3.1.1</version>
 		</dependency>
 	</dependencies>
 

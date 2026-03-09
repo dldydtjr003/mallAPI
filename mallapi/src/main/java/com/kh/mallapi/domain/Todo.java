@@ -16,16 +16,14 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "tbl_todo")
-@SequenceGenerator(name = "TODO_SEQ_GEN", // 시퀀스 제너레이터 이름
-		sequenceName = "TODO_SEQ", // 시퀀스 이름
-		initialValue = 1, // 시작값
-		allocationSize = 1) // 메모리를 통해 할당 할 범위 사이즈
+@SequenceGenerator(name = "TODO_SEQ_GEN", sequenceName = "TODO_SEQ", initialValue = 1, allocationSize = 1)
 @Getter
 @ToString
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Todo {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TODO_SEQ_GEN")
 	private Long tno;
@@ -45,4 +43,5 @@ public class Todo {
 	public void changeDueDate(LocalDate dueDate) {
 		this.dueDate = dueDate;
 	}
+
 }
