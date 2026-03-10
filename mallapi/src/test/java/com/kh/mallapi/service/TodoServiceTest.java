@@ -32,7 +32,7 @@ public class TodoServiceTest {
 	
 	//@Test
 	public void testGet() {
-		Long tno = 101L;
+		Long tno = 250L;
 		TodoDTO todoDTO = todoService.get(tno);
 		log.info(todoDTO);
 	}
@@ -45,7 +45,7 @@ public class TodoServiceTest {
 	
 	//@Test
 	public void testRemove() {
-		Long tno = 101L;
+		Long tno = 250L;
 		todoService.remove(tno);
 	}
 	
