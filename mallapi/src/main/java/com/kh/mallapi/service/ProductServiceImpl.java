@@ -57,6 +57,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public Long register(ProductDTO productDTO) {
 		Product product = dtoToEntity(productDTO);
+		
 		Product result = productRepository.save(product);
 		return result.getPno();
 	}

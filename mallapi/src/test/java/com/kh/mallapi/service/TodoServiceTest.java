@@ -1,6 +1,7 @@
 package com.kh.mallapi.service;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class TodoServiceTest {
 
 	@Autowired
 	private TodoService todoService;
-	
+
 	@Autowired
 	private ProductService productService;
 
@@ -59,11 +60,21 @@ public class TodoServiceTest {
 		log.info(response);
 	}
 
-	//@Test
+	// @Test
 	public void testList2() {
 		// 1 page, 10 size
 		PageRequestDTO pageRequestDTO = PageRequestDTO.builder().build();
 		PageResponseDTO<ProductDTO> result = productService.getList(pageRequestDTO);
 		result.getDtoList().forEach(dto -> log.info(dto));
+	}
+
+	@Test
+	public void testRegister2() {
+		ProductDTO productDTO = ProductDTO.builder().pname("새로운 상품").pdesc("신규 추가 상품입니다.").price(1000).build();
+		// uuid가 있어야함
+		// List<String> listString = List.of("aaaa","bbbb")
+		productDTO.setUploadFileNames(
+				java.util.List.of(UUID.randomUUID() + "_" + "Test1.jpg", UUID.randomUUID() + "_" + "Test2.jpg"));
+		productService.register(productDTO);
 	}
 }

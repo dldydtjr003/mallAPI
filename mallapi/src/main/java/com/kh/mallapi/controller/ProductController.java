@@ -31,17 +31,18 @@ public class ProductController {
 	private final ProductService productService;
 
 	@PostMapping("/")
-	public Map<String, String> register(ProductDTO productDTO) {
-		log.info("register: " + productDTO);
-
+	public Map<String, Long> register(ProductDTO productDTO) {
+		log.info("rgister: " + productDTO);
+		// 첨부된 파일
 		List<MultipartFile> files = productDTO.getFiles();
-
+		// 중복되지 않게 파일명 작성, 내부폴더에 복사, 중복되지 않는 파일명 List<String> 리턴
 		List<String> uploadFileNames = fileUtil.saveFiles(files);
+		// 업로드된 파일 중복되지 않는 파일명 리스트를 productDTO에 저장
 		productDTO.setUploadFileNames(uploadFileNames);
-
 		log.info(uploadFileNames);
-
-		return Map.of("RESULT", "SUCCESS");
+		// 서비스 호출
+		Long pno = productService.register(productDTO);
+		return Map.of("result", pno);
 	}
 
 	@GetMapping("/view/{fileName}")

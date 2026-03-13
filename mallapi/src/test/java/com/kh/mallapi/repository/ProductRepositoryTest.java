@@ -96,4 +96,6 @@ public class ProductRepositoryTest {
 		// java.util
 		result.getContent().forEach(arr -> log.info(Arrays.toString(arr)));
 	}
+	
+	
 }
