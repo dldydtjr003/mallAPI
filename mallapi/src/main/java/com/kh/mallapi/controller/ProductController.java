@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -86,7 +87,7 @@ public class ProductController {
 		// 3. 새로된 파일 X null 리턴
 		// 4. 새로된 파일 X null 리턴
 		List<String> currentUploadFileNames = null;
-		
+
 		if (files != null && !files.get(0).isEmpty()) {
 			currentUploadFileNames = fileUtil.saveFiles(files);
 		}
@@ -97,7 +98,6 @@ public class ProductController {
 		// 3. "aaaa.jpg"
 		List<String> uploadedFileNames = productDTO.getUploadFileNames();
 
-		
 		// 유지되는 파일들 + 새로 업로드된 파일 이름들이 저장해야 하는 파일 목록이 됨
 		if (currentUploadFileNames != null && !currentUploadFileNames.isEmpty()) {
 			// {기존 : "aaaa.jpg" , 추가 : "bbbb.jpg"}
@@ -118,6 +118,16 @@ public class ProductController {
 			// 실제 파일 삭제
 			fileUtil.deleteFiles(removeFiles);
 		}
+		return Map.of("RESULT", "SUCCESS");
+	}
+
+	@DeleteMapping("/{pno}")
+	public Map<String, String> remove(@PathVariable("pno") Long pno) {
+		// 삭제해야 할 파일들 알아내기
+		List<String> oldFileNames = productService.get(pno).getUploadFileNames();
+		// product 테이블에 플래그 기능 true
+		productService.remove(pno);
+		fileUtil.deleteFiles(oldFileNames);
 		return Map.of("RESULT", "SUCCESS");
 	}
 }
