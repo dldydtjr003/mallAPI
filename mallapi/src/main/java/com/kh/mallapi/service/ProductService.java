@@ -8,6 +8,13 @@ import jakarta.transaction.Transactional;
 
 @Transactional
 public interface ProductService {
-	PageResponseDTO<ProductDTO> getList(PageRequestDTO pageRequestDTO);
-	Long register(ProductDTO productDTO); 
+	public PageResponseDTO<ProductDTO> getList(PageRequestDTO pageRequestDTO);
+
+	public Long register(ProductDTO productDTO);
+
+	public ProductDTO get(Long pno);
+
+	public void modify(ProductDTO productDTO);
+	
+	public void remove(Long pno);
 }
