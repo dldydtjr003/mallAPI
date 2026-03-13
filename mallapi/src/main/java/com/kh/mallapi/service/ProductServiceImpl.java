@@ -58,12 +58,10 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public Long register(ProductDTO productDTO) {
 		Product product = dtoToEntity(productDTO);
-
 		Product result = productRepository.save(product);
 		return result.getPno();
 	}
 
-	// DTO -> 영속성 entity
 	private Product dtoToEntity(ProductDTO productDTO) {
 		Product product = Product.builder().pno(productDTO.getPno()).pname(productDTO.getPname())
 				.pdesc(productDTO.getPdesc()).price(productDTO.getPrice()).build();
@@ -87,19 +85,15 @@ public class ProductServiceImpl implements ProductService {
 		return productDTO;
 	}
 
-	// 영속성 도메인 -> DTO
 	private ProductDTO entityToDTO(Product product) {
 		ProductDTO productDTO = ProductDTO.builder().pno(product.getPno()).pname(product.getPname())
 				.pdesc(product.getPdesc()).price(product.getPrice()).build();
 
 		List<ProductImage> imageList = product.getImageList();
-
 		if (imageList == null || imageList.size() == 0) {
 			return productDTO;
 		}
-
 		List<String> fileNameList = imageList.stream().map(productImage -> productImage.getFileName()).toList();
-
 		productDTO.setUploadFileNames(fileNameList);
 		return productDTO;
 	}
@@ -123,7 +117,11 @@ public class ProductServiceImpl implements ProductService {
 			});
 		}
 		productRepository.save(product);
+	}
 
+	@Override
+	public void remove(Long pno) {
+		 productRepository.updateToDelete(pno, true);
 	}
 
 }
