@@ -1,12 +1,18 @@
 package com.kh.mallapi.repository;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import com.kh.mallapi.domain.Product;
 
@@ -34,13 +40,60 @@ public class ProductRepositoryTest {
 	}
 
 	// 상품정보 select(Lazy 방식)
-	@Transactional
-	@Test
+	// @Transactional
+	// @Test
 	public void testRead() {
+		// ProductDTO.pno
 		Long pno = 1L;
+
 		Optional<Product> result = productRepository.findById(pno);
 		Product product = result.orElseThrow();
 		log.info(product);
 		log.info(product.getImageList());
+	}
+
+	// 상품정보 select(Eager 방식)
+	// @Test
+	public void testRead2() {
+		Long pno = 1L;
+		Optional<Product> result = productRepository.selectOne(pno);
+		Product product = result.orElseThrow();
+		log.info(product);
+		log.info(product.getImageList());
+	}
+
+	// @Commit
+	// @Transactional
+	// @Test
+	public void testDelete() {
+		Long pno = 1L;
+		productRepository.updateToDelete(pno, true);
+	}
+
+	// @Test
+	public void testUpdate() {
+		Long pno = 10L;
+		Product product = productRepository.selectOne(pno).get();
+		product.changeName("10번 상품");
+		product.changeDesc("10번 상품 설명입니다.");
+		product.changePrice(5000);
+		// 첨부파일 수정
+		product.clearList();
+
+		product.addImageString(UUID.randomUUID().toString() + "-" + "NEWIMAGE1.jpg");
+		product.addImageString(UUID.randomUUID().toString() + "-" + "NEWIMAGE2.jpg");
+		product.addImageString(UUID.randomUUID().toString() + "-" + "NEWIMAGE3.jpg");
+
+		productRepository.save(product);
+	}
+
+	@Test
+	public void testList() {
+		// org.springframework.data.domain 패키지
+		int page = 1;
+		Pageable pageable = PageRequest.of(page-1, 10, Sort.by("pno").descending());
+		Page<Object[]> result = productRepository.selectList(pageable);
+		// java.util
+		result.getContent().forEach(arr -> log.info(Arrays.toString(arr)));
 	}
 }

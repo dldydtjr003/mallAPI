@@ -31,6 +31,7 @@ public class Product {
 	private String pname;
 	private int price;
 	private String pdesc;
+	private boolean delFlag;
 
 	@ElementCollection
 	@Builder.Default
@@ -47,6 +48,10 @@ public class Product {
 
 	public void changeName(String name) {
 		this.pname = name;
+	}
+
+	public void changeDel(boolean delFlag) {
+		this.delFlag = delFlag;
 	}
 
 	public void addImage(ProductImage image) {
