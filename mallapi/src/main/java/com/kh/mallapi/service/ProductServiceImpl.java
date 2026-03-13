@@ -1,6 +1,7 @@
 package com.kh.mallapi.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -57,11 +58,12 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public Long register(ProductDTO productDTO) {
 		Product product = dtoToEntity(productDTO);
-		
+
 		Product result = productRepository.save(product);
 		return result.getPno();
 	}
 
+	// DTO -> 영속성 entity
 	private Product dtoToEntity(ProductDTO productDTO) {
 		Product product = Product.builder().pno(productDTO.getPno()).pname(productDTO.getPname())
 				.pdesc(productDTO.getPdesc()).price(productDTO.getPrice()).build();
@@ -75,6 +77,53 @@ public class ProductServiceImpl implements ProductService {
 		});
 
 		return product;
+	}
+
+	@Override
+	public ProductDTO get(Long pno) {
+		java.util.Optional<Product> result = productRepository.selectOne(pno);
+		Product product = result.orElseThrow();
+		ProductDTO productDTO = entityToDTO(product);
+		return productDTO;
+	}
+
+	// 영속성 도메인 -> DTO
+	private ProductDTO entityToDTO(Product product) {
+		ProductDTO productDTO = ProductDTO.builder().pno(product.getPno()).pname(product.getPname())
+				.pdesc(product.getPdesc()).price(product.getPrice()).build();
+
+		List<ProductImage> imageList = product.getImageList();
+
+		if (imageList == null || imageList.size() == 0) {
+			return productDTO;
+		}
+
+		List<String> fileNameList = imageList.stream().map(productImage -> productImage.getFileName()).toList();
+
+		productDTO.setUploadFileNames(fileNameList);
+		return productDTO;
+	}
+
+	@Override
+	public void modify(ProductDTO productDTO) {
+		// 1. read
+		Optional<Product> result = productRepository.findById(productDTO.getPno());
+		Product product = result.orElseThrow();
+		// change pname, pdesc, price
+		product.changeName(productDTO.getPname());
+		product.changeDesc(productDTO.getPdesc());
+		product.changePrice(productDTO.getPrice());
+
+		// upload File -- clear first
+		product.clearList();
+		List<String> uploadFileNames = productDTO.getUploadFileNames();
+		if (uploadFileNames != null && uploadFileNames.size() > 0) {
+			uploadFileNames.stream().forEach(uploadName -> {
+				product.addImageString(uploadName);
+			});
+		}
+		productRepository.save(product);
+
 	}
 
 }
