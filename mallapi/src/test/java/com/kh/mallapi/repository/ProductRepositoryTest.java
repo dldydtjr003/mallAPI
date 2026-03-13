@@ -1,7 +1,5 @@
 package com.kh.mallapi.repository;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
-
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.kh.mallapi.domain.Product;
+import com.kh.mallapi.dto.ProductDTO;
+import com.kh.mallapi.service.ProductService;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -24,6 +24,9 @@ public class ProductRepositoryTest {
 
 	@Autowired
 	ProductRepository productRepository;
+	
+	@Autowired
+	private ProductService productService;
 
 	// @Test
 	public void testInsert() {
@@ -87,15 +90,23 @@ public class ProductRepositoryTest {
 		productRepository.save(product);
 	}
 
-	@Test
+	//@Test
 	public void testList() {
 		// org.springframework.data.domain 패키지
 		int page = 1;
-		Pageable pageable = PageRequest.of(page-1, 10, Sort.by("pno").descending());
+		Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("pno").descending());
 		Page<Object[]> result = productRepository.selectList(pageable);
 		// java.util
 		result.getContent().forEach(arr -> log.info(Arrays.toString(arr)));
 	}
-	
-	
+
+	@Test
+	public void testRead3() {
+		// 실제 존재하는 번호로 테스트(DB에서 확인)
+		Long pno = 9L;
+		ProductDTO productDTO = productService.get(pno);
+		log.info(productDTO);
+		log.info(productDTO.getUploadFileNames());
+	}
+
 }
