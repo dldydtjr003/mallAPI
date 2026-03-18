@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,7 +35,7 @@ public class ProductController {
 	private final ProductService productService;
 
 	@PostMapping("/")
-	public Map<String, String> register(ProductDTO productDTO) {
+	public Map<String, Long> register(ProductDTO productDTO) {
 		log.info("register: " + productDTO);
 
 		List<MultipartFile> files = productDTO.getFiles();
@@ -43,8 +44,14 @@ public class ProductController {
 		productDTO.setUploadFileNames(uploadFileNames);
 
 		log.info(uploadFileNames);
+		Long pno = productService.register(productDTO);
 
-		return Map.of("RESULT", "SUCCESS");
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return Map.of("result", pno);
 	}
 
 	@GetMapping("/view/{fileName}")
@@ -53,8 +60,14 @@ public class ProductController {
 	}
 
 	@GetMapping("/list")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	public PageResponseDTO<ProductDTO> list(PageRequestDTO pageRequestDTO) {
 		log.info("list............." + pageRequestDTO);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		return productService.getList(pageRequestDTO);
 	}
 
@@ -106,7 +119,8 @@ public class ProductController {
 			// {기존 : "aaaa.jpg" , 추가 : X} - 문장 실행 X
 			uploadedFileNames.addAll(currentUploadFileNames);
 		}
-
+		productDTO.setUploadFileNames(uploadedFileNames);
+		
 		// 수정 작업
 		productService.modify(productDTO);
 
@@ -118,7 +132,7 @@ public class ProductController {
 			// 실제 파일 삭제
 			fileUtil.deleteFiles(removeFiles);
 		}
-		return Map.of("RESULT", "SUCCESS");
+		return Map.of("result", "SUCCESS");
 	}
 
 	@DeleteMapping("/{pno}")
@@ -128,6 +142,6 @@ public class ProductController {
 		// product 테이블에 플래그 기능 true
 		productService.remove(pno);
 		fileUtil.deleteFiles(oldFileNames);
-		return Map.of("RESULT", "SUCCESS");
+		return Map.of("result", "SUCCESS");
 	}
 }
