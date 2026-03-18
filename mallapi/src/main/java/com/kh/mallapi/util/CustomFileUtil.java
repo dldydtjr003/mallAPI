@@ -45,13 +45,13 @@ public class CustomFileUtil {
 
 	// 사용자가 보내준 리스트 파일들을 내장 폴더에 중복되지 않는 이름으로 변경해서 저장하고, 파일명을 리스트에 저장 후 리턴
 	public List<String> saveFiles(List<MultipartFile> files) throws RuntimeException {
-		// size() == 0 대신 isEmpty() 권장
-		if (files == null || files.isEmpty()) {
-			return null;
-		}
-
 		// 중복되지 않는 파일명 생성 후 저장 리스트
 		List<String> uploadNames = new ArrayList<>();
+		// size() == 0 대신 isEmpty() 권장
+		if (files == null || files.isEmpty()) {
+			uploadNames.add("default.jpg");
+			return uploadNames;
+		}
 
 		for (MultipartFile multipartFile : files) {
 			// 중복되지 않는 파일명 생성
